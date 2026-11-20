@@ -6,10 +6,20 @@ const { startUrl } = require('./config');
 const files = require('./files');
 
 const ORIGIN = startUrl();
-// Google sign-in runs inside the window; everything else that is not Lumnos opens in the user's browser.
-const IN_APP_ORIGINS = new Set([ORIGIN, 'https://accounts.google.com']);
+// Sign-in runs inside the window so the session lands in the app: Lumnos itself, Google's account pages,
+// and the Lumnos API's Google sign-in steps (/api/auth/google…, which may live on a separate API host).
+// Everything else opens in the user's browser. The file bridge only ever works for ORIGIN (see trusted()).
+const GOOGLE_HOSTS = new Set(['accounts.google.com', 'accounts.youtube.com', 'myaccount.google.com']);
 const isLumnos = (url) => { try { return new URL(url).origin === ORIGIN; } catch { return false; } };
-const allowedInApp = (url) => { try { return IN_APP_ORIGINS.has(new URL(url).origin); } catch { return false; } };
+function allowedInApp(url) {
+  try {
+    const u = new URL(url);
+    if (u.origin === ORIGIN) return true;
+    if (u.protocol !== 'https:' && !(u.protocol === 'http:' && (u.hostname === 'localhost' || u.hostname === '127.0.0.1'))) return false;
+    if (GOOGLE_HOSTS.has(u.hostname)) return true;
+    return u.pathname.startsWith('/api/auth/google');
+  } catch { return false; }
+}
 const openExternal = (url) => { try { const u = new URL(url); if (u.protocol === 'https:' || u.protocol === 'mailto:') void shell.openExternal(u.toString()); } catch { /* ignore */ } };
 
 // One instance only.

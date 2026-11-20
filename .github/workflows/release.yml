@@ -22,6 +22,7 @@ jobs:
         run: npx electron-builder --publish never
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+          # identity '-' in package.json gives a free ad-hoc signature (no Apple certificate yet)
       - uses: softprops/action-gh-release@v2
         with:
           name: Lumnos ${{ github.ref_name }}

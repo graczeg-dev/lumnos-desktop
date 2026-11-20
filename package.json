@@ -1,7 +1,7 @@
 {
   "name": "lumnos-desktop",
   "productName": "Lumnos",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Lumnos desktop app",
   "main": "src/main.js",
   "private": true,
@@ -42,9 +42,11 @@
           ]
         }
       ],
-      "hardenedRuntime": true,
+      "hardenedRuntime": false,
       "icon": "build/icon.png",
-      "artifactName": "Lumnos-mac-${arch}.${ext}"
+      "artifactName": "Lumnos-mac-${arch}.${ext}",
+      "identity": "-",
+      "gatekeeperAssess": false
     },
     "win": {
       "target": [

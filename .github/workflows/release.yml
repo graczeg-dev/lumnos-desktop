@@ -1,0 +1,32 @@
+name: Release
+# Runs in the public lumnos-desktop repo. Triggered when a version tag (v1.2.3) is pushed by the Lumnos repo.
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: write
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-14, windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci --no-audit --no-fund
+      - name: Build installers
+        run: npx electron-builder --publish never
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: Lumnos ${{ github.ref_name }}
+          body: Download the file for your computer below — Mac (.dmg), Windows (.exe) or Linux (.AppImage). Or download from lumnos.ai.
+          files: |
+            dist/*.dmg
+            dist/*.exe
+            dist/*.AppImage

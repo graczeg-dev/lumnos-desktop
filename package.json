@@ -1,7 +1,7 @@
 {
   "name": "lumnos-desktop",
   "productName": "Lumnos",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Lumnos desktop app",
   "main": "src/main.js",
   "private": true,
